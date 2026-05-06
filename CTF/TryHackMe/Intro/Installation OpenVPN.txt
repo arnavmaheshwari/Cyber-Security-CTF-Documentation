@@ -1,0 +1,17 @@
+->Install OpenVPN configuration from TryHackMe website by going to the access tab from the profile icon and installing the configuration file on Kali and then making a connection through
+wireless connection settings
+OR
+Command: sudo openvpn arnav.maheshwari.ovpn
+(arnav.maheshwari: Username of TryHackMe) 
+(Use this command in the folder where the openvpn configuration file is downloaded)
+
+->Into To Cyber Security (Learning Path): -
+
+1)Intro To Offensive Security: -
+
+Task 2: -
+
+i)We use gobuster tool to find all the directories(hidden and visible) on the given web page
+Command: gobuster -u http://fakebank.com -w wordlist.txt dir
+(-u: To provide the website link)
+(-w: To provide the wordlist from which directories are found)

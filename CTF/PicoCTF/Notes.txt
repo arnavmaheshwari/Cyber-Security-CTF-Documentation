@@ -1,0 +1,79 @@
+1)Obedient Cat: -
+
+i)Download File, use notepad to open
+
+2)Mod26: -
+
+i)Use rot13 as an alias to shift 13 letters of the alphabet, a technique is used in cryptography
+Command: alias rot13="tr 'A-Za-z' 'N-ZA-Mn-za-m'"
+ii)Save the given string in a file
+Command: nano a.txt
+iii)Send that file's output to rot13
+Command: cat a.txt | rot13
+
+3)Python Wrangling: -
+
+i)See how to run the code using the -h command
+Command: python3 ende.py -h
+ii)Enter the file to be decrypted
+Command: pytohn3 ende.py -d flag.txt.en
+iii)Enter Password
+(Copy from pw.txt)
+
+4)Wave A Flag: -
+
+i)Download the binary file
+ii)We need ascii text from the file, hence we use the string command
+Command: string warm
+
+5)Information: -
+
+i)We analyse the image using exiftool
+Command: exiftool cat.jpg
+ii)We get a code which we put in dCode Cypher Decoder to check which tyoe of cypher it is
+Website: dCode
+iii)We use the base64 cypher, as given by the Cypher decoder to get the flag
+
+6)Nice netcat...: -
+
+i)We use python to solve this
+Command: python
+ii)The output of the file is all numbers, hence we use chr in python to get the ascii character of that given number
+iii)We use list comprehesion
+Command: x = [ int(input()) for i in range(42) ]
+iv)We paste the output of the file as input to the above created list x
+v)Get the output of the file by running python
+Command: for i in x:
+		print(chr(i),end='')
+
+7)Tansformation: -
+
+i)We have to decode the flag. A python code is provided to us for encoding to the same format as the given string
+Command: ''.join([chr((ord(flag[i]) << 8) + ord(flag[i + 1])) for i in range(0, len(flag), 2)])
+ii)Understand the code. We find that the 2 letters are being combined to form a 16-bit number, so, now, we need to reverse that.
+iii)Hence, we reverse the given code to break each character into 2 parts again.
+Command: ''.join([f"{chr(ord(x[i])>>8)}{chr(ord(x[i])&0xff)}" for i in range(0, len(x))])
+(xxxxyyyywwwwzzzz>>8 = xxxxyyyy (To get upper byte))
+(0xff: To remove any garbage value after >>8, as python doesn't have a limit for integers, therefore, can excede 16-bits)
+(f"---": This is format string, works like %d in C, but here we use {} instead of %d)
+(We use list comprehension here)
+(Store the code in variables for easy solving)
+
+8)Mind your Ps and Qs(Cryptography-RSA): -
+
+i)We have a file, which has c, n and e values
+ii)Here, we need to decode the c, i.e, the cypher text, hence we use dcode's RSA tool
+iii)We input the value of n and e to decode the c
+OR
+i)We use RSA formulas
+ii)We need to factorise the n string into p and q
+->n = pq (Prime factorization)
+iii)From p and q, we get the λ.
+->λ(n) = lcm(p − 1, q − 1). 
+iv)Then, we calculate d that is the decryption key,
+->d ≡ e^−1 (mod λ(n))
+v)Using d, we find the value of c
+->c=(d^c) mod n
+vi)This gives us the de-cyphered text
+
+

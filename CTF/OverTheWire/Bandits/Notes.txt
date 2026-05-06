@@ -1,0 +1,268 @@
+Level 0: -(bandit0)
+
+1)Used SSH command to connect to the URL given
+Command: ssh username@URL -p2220
+2)Got access into secure shell of Bandits
+
+Level 1: -(NH2SXQwcBdpmTEzi3bvBHMM9H66vVXjL)
+
+1)Inside Bandit's shell, check for files
+Command: ls
+(ls -lah: For hidden files as well, plus in human readable format)
+2)Find password
+Command: cat
+3)Enter into bandit1 using the found password in the same way using SSH
+
+Level 2: -(rRGizSaX8Mk1RTb1CNQoXTcYZWU6lgzi)
+
+1)Check for files
+Command: ls
+2)Dashed File(Hidden Filenames), read password from it
+Command: qcat < -
+OR
+Command: cat ./-file_name
+
+Level 3: -(aBZ0W5EmUfAf7kHTQeOwd8bauFJ2lAiG)
+
+1)Check for files
+Command: ls
+2)File name with spaces has password
+Command: cat 'file name'
+
+Level 4: -(2EW7BBsr6aMMoJ2HjW067dm8EgX26xNe)
+
+1)Check for files
+Command: ls
+2)Check for hidden files
+Command: find filename
+3)Read file
+Command: cat
+
+Level 5: -(lrIWWI6bB37kxfiCQZqUdOIYfr6eEeqR)
+
+1)Check for files
+Command: ls
+2)Check for hidden files
+Command: find filename
+3)Check file type
+Command: file ./-filename
+(Because all are dashed files)
+4)Read password
+Command: cat
+
+Level 6: -(P4L4vucdmLnm8I7Vl7jG1ApGSfjYKqJU)
+
+1)Check for files
+Command: ls
+2)Hidden files
+Command: find
+3)To find 1033bytes file
+Command: find . -size 1033c
+[For single line answer: head $(find . -size 1033c) -n 1]
+
+Level 7: -(z7WtoNQU2XfjmMtWA8u5rN4vzqu4v99S)
+
+1)Search for all files, because can be anywhere on the server
+Command: cd /
+2)To read all files, we use cat, but we need to find password as well, so we use combined command
+Command: cat $(find / -size 33c -group bandit6 -user bandit7)
+
+Level 8: -(TESKZC0XvTetK0S9xNwm25STk5iWrBvP)
+
+1)Search for files
+Command: ls
+2)We use |(pipe) operator to get the input of the command before it to the command after pipe
+Command:  cat data.txt | grep "millionth"
+
+OR
+
+2)We can use input redirection as well(<)
+Command:  grep "millionth" < data.txt
+
+Level 9: -(EN632PlfYiZbn3PhVK3XOGSlNInNE00t)
+
+1)We sort the data.txt file, because uniq command works only on sorted data, as it checks for duplicate elements
+Command: sort data.txt | uniq -u
+
+Level 10: -(G7w8LIi6J3kTb8A7j9LgrywtEUlyyp6s)
+
+1)We need ASCII text, hence we use strings command to get the readeable text from the file
+Command: strings data.txt
+
+Level 11: -(6zPeziLdR2RKNdNYFNb6nVCKzphlXHBM)
+
+1)We need base64 decoded data, so we use -d
+Command: base64 -d data.txt
+
+Level 12: -(JVNBBFSmZwKKOP0XbFXOoW8chDz5yVRv)
+
+1)We need to check for the alphabets that are 13 spaces ahead, hence we need rot13 command as an alias. We truncate the desired alphabets and use the alphabets 13 spaces ahead
+Command: alias rot13="tr 'A-Za-z' 'N-ZA-Mn-za-m'"
+2)Then we read the file using this rot13 command
+Command: cat data.txt | rot13
+
+Level 13: -(wbWdlBxEir4CaE8LaPhauuOo6pwRmrDw)
+
+-1)We make a a copy of the file in the temporary directory, so as to decompress our own file and use it
+Command: cd $(mktemp -d)
+0)We use xxd to convert hexdump to file(and vice versa), after copying into temporary directory
+Command:  xxd -r dataahead.txt > datanswer.txt  
+1)We decompress 3 types of files: gzip, bzip2, POSIX tar
+Command(gzip){Make sure file name is *.gz): -> mv file1.txt file2.gz
+-> gzip -d datanswer.gz
+Command(bzip2): bzip2 -d filename
+Command(POSIX tar): tar -xvf filename
+2)Read type of files, to know what decompression method is to be used
+Command: file filename
+3)Read the contets of the ASCII file
+Command: cat filename
+
+Level 14: -(fGrHPx402xGC7U7rXKDaxiWFTOiF0ENq)
+
+1)Check for keys using ls, and use that key to login into the bandit14 user
+Command:ssh -i sshkey.private bandit14@localhost -p2220
+2)After logging in, go to the directory mentioned
+Command:cd /etc/bandit_pass
+3)Inside this directory, depending on the user, we can access the desired password
+
+------------------------------
+Checkpoint: -
+
+Command: ssh -i bandit14.pem bandit14@bandit.labs.overthewire.org -p2220
+
+------------------------------
+
+Level 15: -(jN2kgmIXJ6fShzhT2avhotn4Zcka6tnt)
+
+1)We use netcat to read and write(send) data b/w two computer networks. Here host = localhost and port = 30000 
+Command: nc -v localhost 30000
+2)Enter Password of bandit14
+Command: fGrHPx402xGC7U7rXKDaxiWFTOiF0ENq
+
+Level 16: -(JQttfApK4SeyHwDlI9SXGR50qclOAil1)
+
+1)We use netcat to read and write(send) data b/w two computer networks. Here host = localhost and port = 30001
+Command: ncat -C --ssl localhost 30001
+2)Enter password of bandit15
+Command: jN2kgmIXJ6fShzhT2avhotn4Zcka6tnt
+
+Level 17: -(hga5tuuCLF6fFzUpnagiMN8ssu9LFrdg)
+
+1)We find the difference between the two files usinf the diff command
+Command: diff passwords.new passwords.old
+Hint for bandit19: Byebye !
+
+Level 18: -(awhqfNnAbc1naukrpqDYcF95h7HoMTrC)
+
+1)We login into the server without sourcing the bash as the .bashrc has been modified.
+(Bash is a command terminal that takes commands and translates those commands into system calls)
+(-t executes the shell commands, bash --norc)
+(--norc uses the default bash configuration file)
+Commands: ssh -t bandit18@bandit.labs.overthewire.org -p2220 bash --norc
+2)We will get bash shell, find file
+Command: ls
+3)Read the file
+Command: cat
+
+Level 19: -(VxCazJaVykI6W36BkBU0mJTCM8rR95XT)
+
+1)We use the bandit20-do program to access the /etc/bandit_pass location, where bandit20 file is stored
+Command: ./bandit20-do cat /etc/bandit_pass/bandit20
+2)The cat command reads the file and ./bandit20-do provides access to the file by using a euid that makes the user functioning effictively as bandit20, while being in bandit19
+
+Level 20: -(NvEJF7oVjkddltPSrdKEFOllh9V1IBcq)
+
+1)We use our own port to send data to the client(suconnect)
+Command: nc -lvp 3333
+2)We use suconnet to connect to the specified port and reads data
+Command: ./suconnect 3333
+3)We again open connection on the specified port to find that the connection has been made andnc we can now send the data to the suconnenct(client)
+Command: VxCazJaVykI6W36BkBU0mJTCM8rR95XT
+4)We open suconnect and it checks if the password given matches or not
+5)If the password matches, then the password for the next level is sent to the open port, so access using nc
+Command: nc -lvp 3333
+(fg 1 OR fg 2: To access the jobs halted using CTRL+Z)
+(jobs: Gives a list of halted jobs)
+(-l: Listen, to create a port(server))
+(-v: Verbose, gives debug statements and miscellaneous information)
+(-p: Port number)
+
+Level 21: -(WdDozAdTM2z9DiFEQ2mGlwngMfj4EZff)
+
+1)We go the directory mentioned
+Command: cd /etc/cron.d
+2)List all the files available
+Command: ll OR ls -lah
+3)Read the file bandit22
+Command: cat cronjob_bandit22
+4)We find the file where the configuration is stored, read that file
+Command: cat /usr/bin/cronjob_bandit22.sh
+5)The output of the configuration file is being saved in the /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv file, so read that
+Command: cat /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+(* * * * * bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null : This tells us that this command is being executed after every interval)
+(#!/bin/bash
+chmod 644 /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+cat /etc/bandit_pass/bandit22 > /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv : Tells us that it is a bash command, where 644 access code is given, hence since we are the others, we have read access, so we read the /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv file)'
+(We have 3 separate access, user, group and other, each having 3 permission options, namely read, write and execute and these are reprsented via binary numbers, eg: 644(110 100 100))
+whi
+Level 22: -(QYw0Y2aiA672PsMmh9puTQuhoz8SyR2G)
+
+1)We go to the directory mentioned.
+Command: cd /etc/cron.d
+2)Read all the files available
+Command: ls -lah OR ll
+3)We find that the file where configuration may be stored, read that
+Command: cat cronjob_bandit23
+4)Here, we find the file in which configuration is stored in the form of bash command, read that
+Command: cat /usr/bin/cronjob_bandit23.sh
+5)Now, we find out that when cron is executing the job, since the configuration is of bandit 23, the myname takes the value of bandit23, however if we run the scipt, since we are user bandit22, myname will take value of current user, i.e. bandit22.
+6)Since we need bandit23's password, we try and get the file where the password for bandit23 is stored. The mytarget gives the file name, hence we use that command and get the file extension.
+Command: echo $(echo I am user bandit23 | md5sum | cut -d ' ' -f 1)
+7)Now use the file name in the extension where the password is being stored, as given in the cronjob_bandit23.sh file and read it
+Command: /usr/bin$ cat /tmp/8ca319486bfbbc3663ea0fbe81326349
+
+
+Level 23: -(VAfGXJ1PBSsPSnvsjI8p759leLZ9GGar)
+
+1)We go the directory mentioned.
+Command: cd /etc/cron.d/
+2)Here, we read all the files present, and then choose the bandt24 file, as we need bandit24's password.
+Command 1: ls
+Command 2: cat cronjob_bandit24
+3)We find that the a shell script is being executed by bandit24. Hence, we read that script to find out what is happening.
+Command: cat /usr/bin/cronjob_bandit24.sh
+4)We find out that a script is being run and since the script is being run in bandit24, its owner is bandit 24. Understand the script. As per the script, the shell is being executed in the given directory /var/spool/bandit24/foo.
+5)The script is executing and then deleting all the shells in the given directory, as mentioned. We find that if the file is not present in the current or the parent directory, then the following commands are being executed.
+6)Then, if the owner of the file is bandit23, then the file is given a timout of 60 seconds and then the KILL command is being given to it by the -s 9 command, i.e., if any file is present in the directory whose owner is bandit23, then the file is executed, and after 60 seconds, deleted.
+7)Therefore, we need to execute a command from bandit23, so that we get the password of bandit24.
+8)We make a shell script. That script is made in the temporary directory. The script is being made to copy the password of the bandit24, into a temporary file. Here, we copy our script in the bandit24's shell script's directory. Hence, the system feels that the script is being executed by bandit24, therefore, provides the password to it. Therefore, we just need to write a script to copies the password and but the script in the given /var/spool/bandit24/foo directory.
+Command to make temp directory (We make our shell script here, so that only we have control over it, and the script is not made in Bandit's server): mktemp -d
+Command: cd /tmp/tmp.ZFzhejR9t7
+Command (To create a new script): nano myshell.sh
+Inside the shell script: -
+#!/bin/bash
+cat /etc/bandit_pass/bandit24 > /tmp/tmp.ZFzhejR9t7/pass
+(pass is the file name)
+(/etc/bandit_pass/bandit24 : file where all passwords are stored and can be accessed based on the current user)
+Command (To create a file that stores the copied password): touch pass
+9)We need to alow our script to be executed by bandit24, so we change its permissions
+Command: chmod 777 -R /tmp/tmp.ZFzhejR9t7
+10)Now, we copy the script to the provided directory /var/spool/bandit24/foo
+Command: cp myshell.sh /var/spool/bandit24/foo
+11)We wait for some time to allow bandit 24 to execute the command, so that the password is copied to our file.
+(We know that the cronjob is being executed every minute, because * * * * * is given)
+Command: cat pass
+
+Level 24: -(p7TaowMYrmu23Ol8hiZh9UvD0O9hpx8d)
+
+1)We use netcat to read and write(send) data b/w two computer networks. Here host = localhost and port = 30002
+Command: ncat -C localhost 30002
+2)We find that we have to provide a 4-digit code after space to the password. Hence, rather than brute forcing, we write a basic shell script for the same.
+Command: for i in {0000..9999}; do echo "VAfGXJ1PBSsPSnvsjI8p759leLZ9GGar $i";done | ncat -C localhost 30002
+3)The above command is checking for numbers from 0000 to 9999 and appending after bandit24's password and then providing it as an input to the netcat command.
+
+Level 25: -()
+
+1)
+
+
