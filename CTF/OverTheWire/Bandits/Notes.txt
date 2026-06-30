@@ -260,9 +260,3 @@ Command: ncat -C localhost 30002
 2)We find that we have to provide a 4-digit code after space to the password. Hence, rather than brute forcing, we write a basic shell script for the same.
 Command: for i in {0000..9999}; do echo "VAfGXJ1PBSsPSnvsjI8p759leLZ9GGar $i";done | ncat -C localhost 30002
 3)The above command is checking for numbers from 0000 to 9999 and appending after bandit24's password and then providing it as an input to the netcat command.
-
-Level 25: -()
-
-1)
-
-
