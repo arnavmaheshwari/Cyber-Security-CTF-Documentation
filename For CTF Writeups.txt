@@ -1,5 +1,0 @@
-To write .md files: -
-
-->#: For heading h1
-->We can have 1 to 6 hashes, from h1 to h6 headings
-->```-----```: Between backtics, to write code
